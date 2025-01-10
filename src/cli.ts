@@ -6,8 +6,8 @@ import { doSync } from '.';
 const cli = new Command();
 cli
   .description('Script to sync files on one S3 bucket to another')
-  .argument('<source>', 'Source S3 URL (SOURCE)')
-  .argument('<dest>', 'Destination S3 URL (DEST)')
+  .argument('<source>', 'Source S3 URL')
+  .argument('<dest>', 'Destination S3 URL')
   .option('--source-region <sourceRegion>', 'Source S3 region (SOURCE_REGION)')
   .option(
     '--source-endpoint <sourceEndpoint>',

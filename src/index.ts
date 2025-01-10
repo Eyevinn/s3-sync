@@ -35,7 +35,6 @@ async function cleanup(stagingDir: string) {
 
 async function syncToLocal(source: BucketConfig, stagingDir: string) {
   console.log(`Syncing from ${source.s3url} to ${stagingDir}`);
-  console.log(source);
   const args = createS3cmdArgs(
     ['sync', source.s3url.toString(), stagingDir],
     source.s3endpoint
@@ -59,7 +58,6 @@ async function syncToLocal(source: BucketConfig, stagingDir: string) {
 
 async function syncLocalToRemote(dest: BucketConfig, stagingDir: string) {
   console.log(`Syncing from ${stagingDir} to ${dest.s3url}`);
-  console.log(dest);
   const args = createS3cmdArgs(
     ['sync', stagingDir, dest.s3url.toString()],
     dest.s3endpoint
