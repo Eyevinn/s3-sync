@@ -1,17 +1,19 @@
 {
-  "name": "@eyevinn/typescript-nodecli",
+  "name": "@eyevinn/s3-sync",
   "version": "1.0.0",
-  "description": "Template CLI for TypeScript Node.js projects",
+  "description": "Script to sync files on one S3 bucket to another S3 bucket",
   "main": "dist/index.js",
   "bin": {
-    "typescript-nodecli": "dist/cli.js"
+    "s3-sync": "dist/cli.js"
   },
   "scripts": {
-    "test": "jest",
+    "build": "tsc -p tsconfig.json",
+    "test": "jest --passWithNoTests",
     "prepare": "husky install",
     "lint": "eslint .",
     "pretty": "prettier --check --ignore-unknown .",
     "typecheck": "tsc --noEmit -p tsconfig.json",
+    "postversion": "git push && git push --tags",
     "start": "ts-node -T src/cli.ts"
   },
   "license": "MIT",
@@ -36,6 +38,7 @@
     "jest-environment-node-single-context": "^29.1.0",
     "prettier": "^2.8.4",
     "ts-jest": "^29.0.5",
+    "ts-node": "^10.9.2",
     "typescript": "^4.9.5"
   }
 }

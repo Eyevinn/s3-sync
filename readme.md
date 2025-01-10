@@ -1,41 +1,70 @@
 <h1 align="center">
-  Project Name or Logo
+  S3 Sync
 </h1>
 
 <div align="center">
-  project name - quick salespitch why this is awesome. 
-  <br />
-  <br />
-  :book: <b><a href="https://eyevinn.github.io/{{repo-name}}/">Read the documentation (github pages)</a></b> :eyes:
+  Script to sync files on one S3 bucket to another S3 bucket
   <br />
 </div>
 
 <div align="center">
 <br />
 
-[![npm](https://img.shields.io/npm/v/@eyevinn/{{repo-name}}?style=flat-square)](https://www.npmjs.com/package/@eyevinn/{{repo-name}})
-[![github release](https://img.shields.io/github/v/release/Eyevinn/{{repo-name}}?style=flat-square)](https://github.com/Eyevinn/{{repo-name}}/releases)
-[![license](https://img.shields.io/github/license/eyevinn/{{repo-name}}.svg?style=flat-square)](LICENSE)
+[![npm](https://img.shields.io/npm/v/@eyevinn/s3-sync?style=flat-square)](https://www.npmjs.com/package/@eyevinn/s3-sync)
+[![github release](https://img.shields.io/github/v/release/Eyevinn/s3-sync?style=flat-square)](https://github.com/Eyevinn/s3-sync/releases)
+[![license](https://img.shields.io/github/license/eyevinn/s3-sync.svg?style=flat-square)](LICENSE)
 
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg?style=flat-square)](https://github.com/eyevinn/{{repo-name}}/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg?style=flat-square)](https://github.com/eyevinn/s3-sync/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
 [![made with hearth by Eyevinn](https://img.shields.io/badge/made%20with%20%E2%99%A5%20by-Eyevinn-59cbe8.svg?style=flat-square)](https://github.com/eyevinn)
 [![Slack](http://slack.streamingtech.se/badge.svg)](http://slack.streamingtech.se)
 
 </div>
 
-<!-- Add a description of the project here -->
+Sync files on one S3 bucket to another S3 bucket.
 
 ## Requirements
 
-<!--Add any external project dependencies such as node.js version etc here -->
+- AWS S3 CLI
+- NodeJS 18+
 
 ## Installation / Usage
 
-<!--Add clear instructions on how to use the project here -->
+Options can be provided either as command line options or environment variables.
+
+```
+% npx @eyevinn/s3-sync \
+  --source-access-key=<source-access-key> \
+  --source-secret-key=<source-secret-key> \
+  --source-region=<source-region> \
+  --dest-endpoint=<dest-endpoint> \
+  --dest-access-key=<dest-access-key> \
+  --dest-secret-key=<dest-secret-key> \
+  s3://source/files/ s3://dest/files/
+```
+
+Using environment variables stored in a file called `.env` in this example:
+
+```
+SOURCE_ACCESS_KEY=<source-access-key>
+SOURCE_SECRET_KEY=<source-secret-key>
+SOURCE_REGION=<source-region>
+DEST_ENDPOINT=<dest-endpoint>
+DEST_ACCESS_KEY=<dest-access-key>
+DEST_SECRET_KEY=<dest-secret-key>
+```
+
+```
+% set -a ; source .env ; set +a
+% npx @eyevinn/s3-sync s3://source/files s3://dest/files/
+```
 
 ## Development
 
-<!--Add clear instructions on how to start development of the project here -->
+```
+% npm install
+% set -a ; source .env ; set +a
+% npm start -- s3://source/files s3://dest/files/
+```
 
 ## Contributing
 
