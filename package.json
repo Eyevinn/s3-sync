@@ -1,6 +1,6 @@
 {
   "name": "@eyevinn/s3-sync",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Script to sync files on one S3 bucket to another S3 bucket",
   "main": "dist/index.js",
   "bin": {
