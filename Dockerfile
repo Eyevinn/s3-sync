@@ -11,7 +11,7 @@ COPY --from=build /source/dist ./dist
 COPY --from=build /source/package.json /source/package-lock.json ./
 RUN npm ci
 RUN npm install -g .
-VOLUME [ "/data" ]
+VOLUME [ "/usercontent" ]
 
-ENV STAGING_DIR=/data
+ENV STAGING_DIR=/usercontent
 ENTRYPOINT ["s3-sync"]
