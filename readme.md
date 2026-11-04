@@ -84,12 +84,12 @@ Each bucket is written to `s3://<dest-bucket>/<base-prefix>/<source-bucket>/`.
   s3://dest-bucket/instance/
 ```
 
-| Flag              | Env var           | Description                                                                                                      |
-| ----------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `--all-buckets`   | `ALL_BUCKETS`     | Enable the mode (`ALL_BUCKETS=true`)                                                                             |
-| `--include=a,b`   | `INCLUDE_BUCKETS` | Comma separated exact bucket names, no whitespace. An include name missing on the source fails with `bucket not found` |
-| `--exclude=c`     | `EXCLUDE_BUCKETS` | Comma separated exact bucket names. Exclude wins over include                                                    |
-| `--delete`        | `DELETE_ON_DEST`  | Delete destination objects under `<base-prefix>/<source-bucket>/` that are absent from the source (`true`)       |
+| Flag            | Env var           | Description                                                                                                            |
+| --------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `--all-buckets` | `ALL_BUCKETS`     | Enable the mode (`ALL_BUCKETS=true`)                                                                                   |
+| `--include=a,b` | `INCLUDE_BUCKETS` | Comma separated exact bucket names, no whitespace. An include name missing on the source fails with `bucket not found` |
+| `--exclude=c`   | `EXCLUDE_BUCKETS` | Comma separated exact bucket names. Exclude wins over include                                                          |
+| `--delete`      | `DELETE_ON_DEST`  | Delete destination objects under `<base-prefix>/<source-bucket>/` that are absent from the source (`true`)             |
 
 On OSC the flags go in the `cmdLineArgs` option of the service order.
 
@@ -191,14 +191,17 @@ Looking for a hassle-free way to sync S3 buckets without installing anything loc
 1. **Sign up** for a free account at [app.osaas.io](https://app.osaas.io)
 
 2. **Create credential secrets** for your source bucket:
-   - Navigate to Secrets and create `sourceaccesskey` 
+
+   - Navigate to Secrets and create `sourceaccesskey`
    - Create another secret `sourcesecretkey`
 
 3. **Create credential secrets** for your destination bucket:
+
    - Create `destinationaccesskey`
    - Create `destinationsecretkey`
 
 4. **Launch the S3 Sync service**:
+
    - Browse to the [S3 Sync service](https://app.osaas.io/browse/eyevinn-s3-sync)
    - Configure your source and destination bucket URLs
    - Reference your stored credentials

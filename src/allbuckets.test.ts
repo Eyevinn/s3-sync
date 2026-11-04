@@ -41,7 +41,9 @@ function makeClients(
       const cmd = command.constructor.name;
       calls.push({ cmd: 'src:' + cmd, input: command.input });
       if (cmd === 'ListBucketsCommand') {
-        return { Buckets: Object.keys(sourceBuckets).map((Name) => ({ Name })) };
+        return {
+          Buckets: Object.keys(sourceBuckets).map((Name) => ({ Name }))
+        };
       }
       if (cmd === 'ListObjectsV2Command') {
         return listResult(sourceBuckets[command.input.Bucket]);
@@ -70,6 +72,10 @@ function makeClients(
         );
       }
       if (cmd === 'PutObjectCommand') {
+        // drain the body like the real client does
+        for await (const chunk of command.input.Body as Readable) {
+          void chunk;
+        }
         if (opts.stagingDir) {
           stagingSnapshots.push(readdirSync(opts.stagingDir));
         }
@@ -211,9 +217,13 @@ describe('syncAllBuckets', () => {
   });
 
   it('removes the staged file when the copy fails', async () => {
-    const { sourceClient, destClient } = makeClients(buckets(), {}, {
-      failGetFor: 'a'
-    });
+    const { sourceClient, destClient } = makeClients(
+      buckets(),
+      {},
+      {
+        failGetFor: 'a'
+      }
+    );
     await syncAllBuckets(baseOpts(undefined, stagingDir), {
       sourceClient,
       destClient
@@ -362,6 +372,8 @@ describe('helpers', () => {
   });
   it('needsCopy', () => {
     expect(needsCopy({ size: 1 })).toBe(true);
-    expect(needsCopy({ size: 1, lastModified: OLD }, { size: 1, lastModified: NEW })).toBe(false);
+    expect(
+      needsCopy({ size: 1, lastModified: OLD }, { size: 1, lastModified: NEW })
+    ).toBe(false);
   });
 });

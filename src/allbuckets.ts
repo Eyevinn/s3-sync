@@ -159,6 +159,7 @@ async function copyObject(
     stagingDir,
     `obj-${Math.random().toString(36).substring(2)}`
   );
+  let upload: ReturnType<typeof createReadStream> | undefined;
   try {
     const got = await sourceClient.send(
       new GetObjectCommand({ Bucket: bucket, Key: key })
@@ -167,15 +168,20 @@ async function copyObject(
       throw new Error(`Empty body for object ${key}`);
     }
     await pipeline(got.Body as Readable, createWriteStream(stagedFile));
+    upload = createReadStream(stagedFile);
+    // errors surface through the SDK request; avoid an unhandled event if the
+    // stream is abandoned after a failed upload
+    upload.on('error', () => undefined);
     await destClient.send(
       new PutObjectCommand({
         Bucket: opts.dest.s3url.hostname,
         Key: destKey,
-        Body: createReadStream(stagedFile),
+        Body: upload,
         ContentLength: size
       })
     );
   } finally {
+    upload?.destroy();
     rmSync(stagedFile, { force: true });
   }
 }
@@ -256,8 +262,7 @@ export async function syncAllBuckets(
     .filter((n): n is string => !!n);
 
   const selected = sourceNames.filter(
-    (n) =>
-      (include.length === 0 || include.includes(n)) && !exclude.includes(n)
+    (n) => (include.length === 0 || include.includes(n)) && !exclude.includes(n)
   );
   const missing = include.filter(
     (n) => !sourceNames.includes(n) && !exclude.includes(n)
