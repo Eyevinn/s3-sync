@@ -64,6 +64,53 @@ Options can be provided either as command line options or environment variables.
   s3://source/large-file.mp4 s3://dest/large-file.mp4
 ```
 
+### All-buckets mode
+
+Back up every bucket of the source endpoint. The source is the endpoint and
+credentials given by the `SOURCE_*` values; the only positional argument is the
+destination `s3://<dest-bucket>/<base-prefix>/`. Buckets are listed with
+ListBuckets at run time, so buckets created later are included on the next run.
+Each bucket is written to `s3://<dest-bucket>/<base-prefix>/<source-bucket>/`.
+
+```bash
+% npx @eyevinn/s3-sync \
+  --all-buckets --include=a,b --exclude=c --delete \
+  --source-endpoint=<source-endpoint> \
+  --source-access-key=<source-access-key> \
+  --source-secret-key=<source-secret-key> \
+  --dest-endpoint=<dest-endpoint> \
+  --dest-access-key=<dest-access-key> \
+  --dest-secret-key=<dest-secret-key> \
+  s3://dest-bucket/instance/
+```
+
+| Flag            | Env var           | Description                                                                                                            |
+| --------------- | ----------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| `--all-buckets` | `ALL_BUCKETS`     | Enable the mode (`ALL_BUCKETS=true`)                                                                                   |
+| `--include=a,b` | `INCLUDE_BUCKETS` | Comma separated exact bucket names, no whitespace. An include name missing on the source fails with `bucket not found` |
+| `--exclude=c`   | `EXCLUDE_BUCKETS` | Comma separated exact bucket names. Exclude wins over include                                                          |
+| `--delete`      | `DELETE_ON_DEST`  | Delete destination objects under `<base-prefix>/<source-bucket>/` that are absent from the source (`true`)             |
+
+On OSC the flags go in the `cmdLineArgs` option of the service order.
+
+Copying is additive by default. An object is copied when it is missing at the
+destination, its size differs, or the source `LastModified` is newer. Objects are
+staged one at a time in `STAGING_DIR` and the staged file is removed before the
+next object; objects above 500 MB use the chunked multipart copy.
+
+A failing bucket does not stop the others. At the end one line is printed on
+stdout:
+
+```
+S3SYNC_SUMMARY {"mode":"all-buckets","buckets":[{"name":"a","status":"ok","objects":3,"bytes":1024,"error":""}],"failed":0}
+```
+
+`objects` and `bytes` count what this run wrote to the destination. `error` is
+one line of at most 300 characters and never contains an access key, secret key
+or session token. The exit code is 1 when any bucket failed, otherwise 0.
+Without `--all-buckets` the behaviour is unchanged, including exit code 0 on
+error.
+
 ### With Session Tokens (for temporary credentials)
 
 ```bash
@@ -144,14 +191,17 @@ Looking for a hassle-free way to sync S3 buckets without installing anything loc
 1. **Sign up** for a free account at [app.osaas.io](https://app.osaas.io)
 
 2. **Create credential secrets** for your source bucket:
-   - Navigate to Secrets and create `sourceaccesskey` 
+
+   - Navigate to Secrets and create `sourceaccesskey`
    - Create another secret `sourcesecretkey`
 
 3. **Create credential secrets** for your destination bucket:
+
    - Create `destinationaccesskey`
    - Create `destinationsecretkey`
 
 4. **Launch the S3 Sync service**:
+
    - Browse to the [S3 Sync service](https://app.osaas.io/browse/eyevinn-s3-sync)
    - Configure your source and destination bucket URLs
    - Reference your stored credentials
