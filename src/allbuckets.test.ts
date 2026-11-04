@@ -306,9 +306,8 @@ describe('syncAllBuckets', () => {
     });
     expect(largeCopy).toHaveBeenCalledTimes(1);
     expect(largeCopy.mock.calls[0][0].s3url.hostname).toBe('a');
-    expect(largeCopy.mock.calls[0][1].s3url.pathname).toBe(
-      '/instance/a/big.bin'
-    );
+    expect(largeCopy.mock.calls[0][0].key).toBe('big.bin');
+    expect(largeCopy.mock.calls[0][1].key).toBe('instance/a/big.bin');
     expect(calls.some((c) => c.cmd === 'dst:PutObjectCommand')).toBe(false);
   });
 

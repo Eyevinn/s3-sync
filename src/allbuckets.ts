@@ -143,11 +143,13 @@ async function copyObject(
     await largeCopy(
       {
         ...opts.source,
-        s3url: new URL(`s3://${bucket}/${encodeURI(key)}`)
+        s3url: new URL(`s3://${bucket}/`),
+        key
       },
       {
         ...opts.dest,
-        s3url: new URL(`s3://${opts.dest.s3url.hostname}/${encodeURI(destKey)}`)
+        s3url: new URL(`s3://${opts.dest.s3url.hostname}/`),
+        key: destKey
       },
       size
     );

@@ -18,6 +18,10 @@ const CHUNK_SIZE = 100 * 1024 * 1024; // 100MB chunks
 
 export interface BucketConfig {
   s3url: URL;
+  // Exact object key (not URL-encoded). When set it takes precedence over the
+  // key derived from s3url.pathname, which is lossy for keys containing
+  // characters such as '#', '?', '%' or spaces.
+  key?: string;
   s3region?: string;
   s3endpoint?: string;
   s3accessKey?: string;
@@ -68,6 +72,10 @@ export function createS3Client(config: BucketConfig): S3Client {
   return new S3Client(clientConfig);
 }
 
+function objectKey(cfg: BucketConfig): string {
+  return cfg.key !== undefined ? cfg.key : cfg.s3url.pathname.substring(1);
+}
+
 async function getFileSize(
   source: BucketConfig,
   awsCliPath = 'aws'
@@ -79,7 +87,7 @@ async function getFileSize(
       '--bucket',
       source.s3url.hostname,
       '--key',
-      source.s3url.pathname.substring(1)
+      objectKey(source)
     ],
     source.s3endpoint
   );
@@ -104,7 +112,7 @@ async function getFileSize(
 
 async function getFileSizeSDK(source: BucketConfig): Promise<number> {
   const sourceClient = createS3Client(source);
-  const sourceKey = source.s3url.pathname.substring(1);
+  const sourceKey = objectKey(source);
 
   const command = new HeadObjectCommand({
     Bucket: source.s3url.hostname,
@@ -135,12 +143,12 @@ async function copyLargeFileChunkedSDK(
   const sourceClient = createS3Client(source);
   const destClient = createS3Client(dest);
 
-  const sourceKey = source.s3url.pathname.substring(1);
-  let destKey = dest.s3url.pathname.substring(1);
+  const sourceKey = objectKey(source);
+  let destKey = objectKey(dest);
 
   // If destination ends with '/' or is empty, append the source filename
   if (destKey === '' || destKey.endsWith('/')) {
-    const sourceFileName = source.s3url.pathname.split('/').pop();
+    const sourceFileName = objectKey(source).split('/').pop();
     if (sourceFileName) {
       destKey = destKey + sourceFileName;
     }
