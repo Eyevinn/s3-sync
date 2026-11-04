@@ -13,7 +13,7 @@ import {
 } from '@aws-sdk/client-s3';
 
 const DEFAULT_STAGING_DIR = '/tmp/data';
-const LARGE_FILE_THRESHOLD = 500 * 1024 * 1024; // 500MB
+export const LARGE_FILE_THRESHOLD = 500 * 1024 * 1024; // 500MB
 const CHUNK_SIZE = 100 * 1024 * 1024; // 100MB chunks
 
 export interface BucketConfig {
@@ -47,7 +47,7 @@ async function cleanup(stagingDir: string) {
   rmSync(stagingDir, { recursive: true, force: true });
 }
 
-function createS3Client(config: BucketConfig): S3Client {
+export function createS3Client(config: BucketConfig): S3Client {
   const clientConfig: any = {
     region: config.s3region || 'us-east-1',
     credentials: {
@@ -246,7 +246,7 @@ async function copyLargeFileChunkedSDK(
   }
 }
 
-async function copyLargeFileChunked(
+export async function copyLargeFileChunked(
   source: BucketConfig,
   dest: BucketConfig
 ): Promise<void> {
